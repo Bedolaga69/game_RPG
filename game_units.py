@@ -1,34 +1,38 @@
 import random
 
 from Items import *
+
 # from game.status_effects import StatusEffect
 from status_effects import StatusEffect
 
+
 class Unit:
     """класс базовых методов для создания всех сущностей"""
-    def __init__(self, name, health, attack, defense, attack_speed = 100):
+
+    def __init__(self, name, health, attack, defense, attack_speed=100):
         self.name = name
         self.health = health
         self.attack = attack
         self.defense = defense
         self.max_health = health
         self.attack_speed = attack_speed
-        #Список для хранения объектов со статус эффектами
+        # Список для хранения объектов со статус эффектами
         self.active_effects = []
 
-    def add_effect(self, name, duration, effect_value = 0):
+    def add_effect(self, name, duration, effect_value=0):
         """добавляет новый эффект или обновляет существующий"""
         for effect in self.active_effects:
             if effect.name == name:
                 effect.duration = duration
                 effect.effect_value = effect_value
-                print(f"эффект {name} на {self.name} обновлен! оставшиеся ходы {duration}")
+                print(
+                    f"эффект {name} на {self.name} обновлен! оставшиеся ходы {duration}"
+                )
                 return
 
         new_effect = StatusEffect(name, duration, effect_value)
         self.active_effects.append(new_effect)
         new_effect.on_apply(self)
-
 
     def update_effect(self):
         """применяет эффекты в начале раунда и удаляет истекшие эффекты"""
@@ -56,7 +60,9 @@ class Unit:
             print(f"{self.name} повержен!")
         else:
             self.health -= actual_damage
-            print(f"{self.name} получает {actual_damage} урона, здоровье: {self.health}")
+            print(
+                f"{self.name} получает {actual_damage} урона, здоровье: {self.health}"
+            )
 
     def attack_target(self, other_character):
         """метод для атаки цели с использованием метода нанесения урона
@@ -81,7 +87,17 @@ class Character(Unit):
     defense - защита
     attack_speed - скорость атаки
     """
-    def __init__(self, name, health, attack, defense, attack_speed = 100, equipped_weapon = None, equipped_armor = None):
+
+    def __init__(
+        self,
+        name,
+        health,
+        attack,
+        defense,
+        attack_speed=100,
+        equipped_weapon=None,
+        equipped_armor=None,
+    ):
         """инициализирует персонажа игрока и автоматически рассчитывает бонусы от стартовой экипировки"""
         super().__init__(name, health, attack, defense, attack_speed)
         self.inventory = []
@@ -99,7 +115,6 @@ class Character(Unit):
 
     def reset_damage(self):
         """сбрасывает временные изменения урона для персонажа"""
-        pass
 
     def use_item(self, item):
         """использует предмет из инвентаря персонажа
@@ -131,7 +146,9 @@ class Character(Unit):
                     print(f"вы экипировали {item.name}")
                     self.inventory.remove(item)
                 else:
-                    print(f"неизвестный тип экипировки у {item.name}: {item.equipment_type}")
+                    print(
+                        f"неизвестный тип экипировки у {item.name}: {item.equipment_type}"
+                    )
             else:
                 print(f"предмета {item.name} нет в инвентаре")
 
@@ -148,12 +165,20 @@ class Character(Unit):
                 elif item.effect_type == "buff_attack":
                     self.attack += item.effect_value
                     print(f"текущая атака {self.name} = {self.attack}")
-                    #добавить новые эффекты
+                    # добавить новые эффекты
                 elif item.effect_type == "gold":
-                    max_gold_bonus = int(item.effect_value * 0.2)#случайный бонус к золоту: отнимает или прибавляет монеты в пределах 20%
-                    random_bonus = random.randint(-max_gold_bonus, max_gold_bonus)#золото либо отнимается, либо прибавляется в диапазоне max_gold_bonus
-                    self.gold += item.effect_value + random_bonus#золото прибавляется к базовому значению
-                    print(f"вы получили {item.effect_value + random_bonus} золота с мешка")
+                    max_gold_bonus = int(
+                        item.effect_value * 0.2
+                    )  # случайный бонус к золоту: отнимает или прибавляет монеты в пределах 20%
+                    random_bonus = random.randint(
+                        -max_gold_bonus, max_gold_bonus
+                    )  # золото либо отнимается, либо прибавляется в диапазоне max_gold_bonus
+                    self.gold += (
+                        item.effect_value + random_bonus
+                    )  # золото прибавляется к базовому значению
+                    print(
+                        f"вы получили {item.effect_value + random_bonus} золота с мешка"
+                    )
                 elif item.effect_type == "regeneration":
                     self.add_effect("continuous_heal", item.duration, item.effect_value)
                 elif item.effect_type == "poison":
@@ -162,7 +187,6 @@ class Character(Unit):
                 self.inventory.remove(item)
             else:
                 print(f"предмета {item.name} нет в инвентаре")
-
 
     def add_item(self, *items):
         """добавление предмета в инвентарь игроку
@@ -173,19 +197,16 @@ class Character(Unit):
             print(f"{item.name} добавлен в инвентарь {self.name}")
 
 
-
 class Enemy(Unit):
     """класс противника (монстра), с которого игрок может получить награду
 
-        gold (int)
-            количество золота, которое перейдет игроку после победы над врагом
+    gold (int)
+        количество золота, которое перейдет игроку после победы над врагом
     """
-    def __init__(self, name, health, attack, defense,gold=0, attack_speed = 100):
+
+    def __init__(self, name, health, attack, defense, gold=0, attack_speed=100):
         super().__init__(name, health, attack, defense, attack_speed)
         self.gold = gold
-
-
-
 
 
 armor = Equipment("броня", "дает 50 брони", "armor", 50, 250, 25)

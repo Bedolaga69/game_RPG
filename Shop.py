@@ -8,17 +8,17 @@ class Shop:
         имя магазина, тип: строка
     assortment
         ассортимент магазина, тип: список из Item"""
+
     def __init__(self, name: str, assortment: list[Item]):
         self.name = name
         self.assortment = assortment
 
     def show_items(self):
         """метод для показа всех вещей который есть в магазине с их ценой"""
-        print(f'добро пожаловать в магазин {self.name}!')
+        print(f"добро пожаловать в магазин {self.name}!")
         print("в продаже:")
         for i in range(len(self.assortment)):
             print(f"{i}, {self.assortment[i].name}: {self.assortment[i].price} монет")
-
 
     def buy_item(self, character: Character, item_index: str):
         """метод для покупки предмета по индексу и выводом баланса персонажа
@@ -26,7 +26,7 @@ class Shop:
             персонаж который покупает предмет
         item_index
             индекс предмета, тип: строка
-            """
+        """
         if not item_index.isdigit():
             print("Нужно ввести номер предмета числом!")
             return
@@ -38,14 +38,12 @@ class Shop:
             if character.gold >= item_to_buy.price:
                 character.gold -= item_to_buy.price
                 character.add_item(item_to_buy)
-                # print("покупка состоялась")
                 print(f"вы купили {item_to_buy.name}, ваш баланс {character.gold}")
             else:
                 # print("не хватает денег")
                 print(f"недостаточно золота, ваш баланс: {character.gold}")
         else:
             print("предмета с таким номером нет")
-
 
     def sell_item(self, character: Character, item_to_sell: Item):
         """метод для продажи предмета за половину его цены
@@ -61,4 +59,3 @@ class Shop:
             self.assortment.append(item_to_sell)
         else:
             print("предмета нет в инвентаре")
-

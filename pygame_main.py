@@ -1,5 +1,7 @@
-import pygame
 import sys
+
+import pygame
+
 # Импортируем твои классы из твоих файлов
 from game_characters import Warrior
 from game_units import Enemy
@@ -82,7 +84,11 @@ while running:
             mouse_pos = event.pos
 
             # Логика нажатия на кнопку "Атака"
-            if btn_attack.is_clicked(mouse_pos) and player.is_alive() and enemy.is_alive():
+            if (
+                btn_attack.is_clicked(mouse_pos)
+                and player.is_alive()
+                and enemy.is_alive()
+            ):
                 # Вызываем твой метод атаки по цели[span_4](start_span)[span_4](end_span)
                 player.attack_target(enemy)
                 player.buff_damage()
@@ -91,7 +97,7 @@ while running:
                 # Если враг выжил, он атакует в ответ (как в твоем _process_enemy_turn[span_5](start_span)[span_5](end_span))
                 if enemy.is_alive():
                     enemy.attack_target(player)
-                    battle_log += f" Враг нанес ответный удар!"
+                    battle_log += " Враг нанес ответный удар!"
                 else:
                     battle_log = f"Враг {enemy.name} повержен! Золото: +{enemy.gold}"
                     player.gold += enemy.gold
