@@ -1,8 +1,7 @@
 import random
 
+from exceptions import *
 from Items import *
-
-# from game.status_effects import StatusEffect
 from status_effects import StatusEffect
 
 
@@ -126,6 +125,7 @@ class Character(Unit):
         item
             объект предмета (Equipment или Consumable), который нужно использовать"""
         if isinstance(item, Equipment):
+
             if item in self.inventory:
                 if item.equipment_type == "weapon":
                     if self.equipped_weapon is not None:
@@ -146,13 +146,14 @@ class Character(Unit):
                     print(f"вы экипировали {item.name}")
                     self.inventory.remove(item)
                 else:
-                    print(
+                    raise UnknownEquipmentTypeError(
                         f"неизвестный тип экипировки у {item.name}: {item.equipment_type}"
                     )
             else:
-                print(f"предмета {item.name} нет в инвентаре")
+                raise ItemNotFoundError(f"предмета {item.name} нет в инвентаре")
 
         if isinstance(item, Consumable):
+
             if item in self.inventory:
                 print(f"{self.name} использует {item}")
                 if item.effect_type == "heal":
@@ -186,7 +187,8 @@ class Character(Unit):
 
                 self.inventory.remove(item)
             else:
-                print(f"предмета {item.name} нет в инвентаре")
+                raise ItemNotFoundError(f"предмета {item.name} нет в инвентаре")
+
 
     def add_item(self, *items):
         """добавление предмета в инвентарь игроку

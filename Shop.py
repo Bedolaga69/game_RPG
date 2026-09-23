@@ -1,3 +1,4 @@
+from exceptions import *
 from game_units import Character
 from item_storage import *
 
@@ -20,6 +21,7 @@ class Shop:
         for i in range(len(self.assortment)):
             print(f"{i}, {self.assortment[i].name}: {self.assortment[i].price} монет")
 
+
     def buy_item(self, character: Character, item_index: str):
         """метод для покупки предмета по индексу и выводом баланса персонажа
         character
@@ -35,13 +37,13 @@ class Shop:
 
         if 0 <= idx < len(self.assortment):
             item_to_buy = self.assortment[idx]
-            if character.gold >= item_to_buy.price:
-                character.gold -= item_to_buy.price
-                character.add_item(item_to_buy)
-                print(f"вы купили {item_to_buy.name}, ваш баланс {character.gold}")
-            else:
-                # print("не хватает денег")
-                print(f"недостаточно золота, ваш баланс: {character.gold}")
+            if character.gold < item_to_buy.price:
+                raise NotEnoughGoldError(
+                    f"недостаточно золота: нужно {item_to_buy.price}, есть {character.gold}"
+                )
+            character.gold -= item_to_buy.price
+            character.add_item(item_to_buy)
+            print(f"вы купили {item_to_buy.name}, ваш баланс {character.gold}")
         else:
             print("предмета с таким номером нет")
 
@@ -58,4 +60,4 @@ class Shop:
             print(f"персонаж получил: {revenue} золота, баланс: {character.gold}")
             self.assortment.append(item_to_sell)
         else:
-            print("предмета нет в инвентаре")
+            raise ItemNotFoundError("предмета нет в инвентаре")
