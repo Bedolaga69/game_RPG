@@ -2,11 +2,12 @@ import os
 import random
 import sys
 
-import pygame
 from game_characters import Archer, Mage, Warrior
 from game_units import Enemy
 from item_storage import ITEMS, LootTable, enemy_loot, shop_loot
 from Shop import Shop
+
+import pygame
 
 pygame.init()
 

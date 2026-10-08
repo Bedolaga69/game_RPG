@@ -1,10 +1,10 @@
 import sys
 
-import pygame
-
 # Импортируем твои классы из твоих файлов
 from game_characters import Warrior
 from game_units import Enemy
+
+import pygame
 
 # Инициализация PyGame
 pygame.init()
