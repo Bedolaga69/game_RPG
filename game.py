@@ -1,9 +1,10 @@
 import random
 
-from game_characters import *
-from game_units import *
-from item_storage import *
-from Shop import *
+from exceptions import GameError
+from game_characters import Archer, Mage, Warrior
+from game_units import Enemy
+from item_storage import ITEMS, enemy_loot, shop_loot
+from Shop import Shop
 
 
 class Game:
@@ -118,7 +119,6 @@ class Game:
         else:
             print("вы мертвы")
 
-
     def start_shop_event(self):
         """открытие магазина для покупки предметов со своим шансом в магазине"""
         if random.random() < 0.5:
@@ -150,11 +150,17 @@ class Game:
 
                             if item_answer.isdigit():
                                 item_answer = int(item_answer)
-                                if 1 <= item_answer <= len(self.current_player.inventory):
+                                if (
+                                    1
+                                    <= item_answer
+                                    <= len(self.current_player.inventory)
+                                ):
                                     item_to_sell = self.current_player.inventory[
                                         item_answer - 1
                                     ]
-                                    self.shop.sell_item(self.current_player, item_to_sell)
+                                    self.shop.sell_item(
+                                        self.current_player, item_to_sell
+                                    )
                                 else:
                                     print("такого предмета в инвентаре нет")
                             else:
@@ -165,7 +171,11 @@ class Game:
                             item_answer = input("введите порядковый номер предмета: ")
                             if item_answer.isdigit():
                                 item_answer = int(item_answer)
-                                if 1 <= item_answer <= len(self.current_player.inventory):
+                                if (
+                                    1
+                                    <= item_answer
+                                    <= len(self.current_player.inventory)
+                                ):
                                     self.current_player.use_item(
                                         self.current_player.inventory[item_answer - 1]
                                     )
@@ -268,5 +278,6 @@ class Game:
             self.is_running = True
 
 
-game = Game("подземелье колодца", "приключение в подземелье")
-game.start_game()
+if __name__ == "__main__":
+    game = Game("подземелье колодца", "приключение в подземелье")
+    game.start_game()

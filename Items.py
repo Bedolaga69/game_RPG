@@ -29,7 +29,7 @@ class Item:
         return hash(self.name)
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class Consumable(Item):
     """класс расходуемых предметов
     effect_type
@@ -37,6 +37,7 @@ class Consumable(Item):
     effect_value
         величина эффекта
     """
+
     effect_type: str = ""
     duration: int = 0
 
@@ -50,7 +51,7 @@ class Consumable(Item):
         return f"<{self.name} ({self.effect_value})>"
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(eq=False)
 class Equipment(Item):
     """класс снаряжения
     durability_value
@@ -68,7 +69,5 @@ class Equipment(Item):
         return f"{self.name}, {self.description}, {self.price}, {self.durability_value}"
 
 
-
 # armor = Equipment("броня", "дает 50 брони", "нагрудник", 250, 50, 25)
 # potion = Consumable("фласка", "восстанавливает 30 здоровья", 95, "лечение", 40)
-

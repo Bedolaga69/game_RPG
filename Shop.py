@@ -1,6 +1,6 @@
-from exceptions import *
+from exceptions import ItemNotFoundError, NotEnoughGoldError
 from game_units import Character
-from item_storage import *
+from Items import Item
 
 
 class Shop:
@@ -15,26 +15,17 @@ class Shop:
         self.assortment = assortment
 
     def show_items(self):
-        """метод для показа всех вещей который есть в магазине с их ценой"""
         print(f"добро пожаловать в магазин {self.name}!")
         print("в продаже:")
-        for i in range(len(self.assortment)):
-            print(f"{i}, {self.assortment[i].name}: {self.assortment[i].price} монет")
+        for number, item in enumerate(self.assortment, start=1):
+            print(f"{number}. {item.name}: {item.price} монет")
 
-
-    def buy_item(self, character: Character, item_index: str):
-        """метод для покупки предмета по индексу и выводом баланса персонажа
-        character
-            персонаж который покупает предмет
-        item_index
-            индекс предмета, тип: строка
-        """
+    def buy_item(self, character, item_index: str):
         if not item_index.isdigit():
             print("Нужно ввести номер предмета числом!")
             return
 
-        idx = int(item_index)
-
+        idx = int(item_index) - 1  # игрок вводит с 1, список с 0
         if 0 <= idx < len(self.assortment):
             item_to_buy = self.assortment[idx]
             if character.gold < item_to_buy.price:

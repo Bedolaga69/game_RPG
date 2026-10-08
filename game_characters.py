@@ -1,6 +1,6 @@
 import random
 
-from game_units import *
+from game_units import Character
 
 
 class Warrior(Character):
@@ -25,7 +25,7 @@ class Warrior(Character):
         other_character
             персонаж-цель, принимающий урон"""
         actual_damage = (
-            self.attack * self.multiplier_damage
+            int(self.attack * self.multiplier_damage)
         )  # round - округление до 2 знаков после запятой
         print(f"урон повысился до {actual_damage}")
         print(f"{self.name} атакует {other_character.name}!")

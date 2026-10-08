@@ -1,15 +1,10 @@
 import random
 
-from Items import *
+from Items import Consumable, Equipment, Item
 
 ITEMS = {
     "regen_potion": Consumable(
-        "длительное зелье здоровья",
-        "дает регенерацию на 4 хода",
-        150,
-        "regeneration",
-        10,
-        3,
+        "длительное зелье здоровья", "дает регенерацию на 4 хода", 150, "regeneration", 10, 3,
     ),
     "gold_pouch_small": Consumable(
         "маленький мешок золота", "дает 15 золота", 0, "gold", 15
@@ -21,7 +16,8 @@ ITEMS = {
         "большой мешок золота", "дает 90 золота", 0, "gold", 90
     ),
     "heal_potion": Consumable(
-        "зелье здоровья", "восстанавливает 30 здоровья", 95, "heal", 30
+    name="зелье здоровья", description="восстанавливает 30 здоровья",
+    price=95, effect_type="heal", effect_value=30,
     ),
     "attack_potion": Consumable(
         "зелье урона", "дает +10 к урону", 150, "buff_attack", 10
@@ -29,7 +25,10 @@ ITEMS = {
     "defense_potion": Consumable(
         "зелье защиты", "дает +15 к защите", 100, "buff_defense", 15
     ),
-    "sword": Equipment("меч", "дает 33 урона", "weapon", 300, 33, 33),
+    "sword": Equipment(
+    name="меч", description="дает 33 урона",
+    price=300, equipment_type="weapon", effect_value=33,
+    ),
     "armor": Equipment("броня", "дает 50 брони", "armor", 50, 250, 25),
     "sword_of_heaven": Equipment(
         "меч небожитель", "дает 69 урона", "weapon", 500, 69, 69
@@ -58,13 +57,7 @@ ITEMS = {
     "dragonplate_armor": Equipment(
         "Драконья броня", "лучшая кованая броня из Skyrim", "armor", 1200, 75, 75
     ),
-    "elven_armor": Equipment(
-        "Эльфийская броня",
-        "лёгкая и прочная броня из Elder Scrolls",
-        "armor",
-        600,
-        35,
-        35,
+    "elven_armor": Equipment("Эльфийская броня", "лёгкая и прочная броня из Elder Scrolls", "armor", 600, 35, 35,
     ),
     "orsimer_armor": Equipment(
         "Орсимерская броня", "броня орков из Skyrim", "armor", 700, 48, 48

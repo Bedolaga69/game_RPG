@@ -30,8 +30,10 @@ def heal_tick(unit, value=10):
 
 
 def poison_tick(unit, value=5):
-    unit.health -= value
-    print(f"[Эффект] {unit.name} теряет {value} HP от яда.")
+    unit.health = max(0, unit.health - value)
+    print(f"[Эффект] {unit.name} теряет {value} HP от яда. HP: {unit.health}")
+    if unit.health == 0:
+        print(f"{unit.name} погиб от яда!")
 
 
 def shield_apply(unit, value=10):
@@ -82,5 +84,3 @@ class StatusEffect:
             self.custom_remove(
                 unit, self.effect_value
             ) if self.effect_value else self.custom_remove(unit)
-
-

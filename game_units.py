@@ -1,7 +1,7 @@
 import random
 
-from exceptions import *
-from Items import *
+from exceptions import ItemNotFoundError, UnknownEquipmentTypeError
+from Items import Consumable, Equipment
 from status_effects import StatusEffect
 
 
@@ -116,79 +116,58 @@ class Character(Unit):
         """сбрасывает временные изменения урона для персонажа"""
 
     def use_item(self, item):
-        """использует предмет из инвентаря персонажа
+        if item not in self.inventory:
+            raise ItemNotFoundError(f"предмета {item.name} нет в инвентаре")
 
-        Если предмет - снаряжение (Equipment), он экипируется в соответствующий слот,
-        бонусы предмета добавляются к статам персонажа, а старая экипировка возвращается в инвентарь.
-        Если предмет - расходник (Consumable), применяется его эффект (лечение, бафф, кошель с золотом),
-        после чего предмет уничтожается
-        item
-            объект предмета (Equipment или Consumable), который нужно использовать"""
         if isinstance(item, Equipment):
+            self._equip(item)
+        elif isinstance(item, Consumable):
+            self._consume(item)
 
-            if item in self.inventory:
-                if item.equipment_type == "weapon":
-                    if self.equipped_weapon is not None:
-                        old_weapon = self.equipped_weapon
-                        self.attack -= old_weapon.effect_value
-                        self.inventory.append(old_weapon)
-                    self.equipped_weapon = item
-                    self.attack += item.effect_value
-                    print(f"вы экипировали {item.name}")
-                    self.inventory.remove(item)
-                elif item.equipment_type == "armor":
-                    if self.equipped_armor is not None:
-                        old_armor = self.equipped_armor
-                        self.defense -= old_armor.effect_value
-                        self.inventory.append(old_armor)
-                    self.equipped_armor = item
-                    self.defense += item.effect_value
-                    print(f"вы экипировали {item.name}")
-                    self.inventory.remove(item)
-                else:
-                    raise UnknownEquipmentTypeError(
-                        f"неизвестный тип экипировки у {item.name}: {item.equipment_type}"
-                    )
-            else:
-                raise ItemNotFoundError(f"предмета {item.name} нет в инвентаре")
+    def _equip(self, item):
+        if item.equipment_type == "weapon":
+            self.inventory.remove(item)
+            if self.equipped_weapon is not None:
+                self.attack -= self.equipped_weapon.effect_value
+                self.inventory.append(self.equipped_weapon)
+            self.equipped_weapon = item
+            self.attack += item.effect_value
+        elif item.equipment_type == "armor":
+            self.inventory.remove(item)
+            if self.equipped_armor is not None:
+                self.defense -= self.equipped_armor.effect_value
+                self.inventory.append(self.equipped_armor)
+            self.equipped_armor = item
+            self.defense += item.effect_value
+        else:
+            raise UnknownEquipmentTypeError(
+                f"неизвестный тип экипировки у {item.name}: {item.equipment_type}"
+            )
+        print(f"вы экипировали {item.name}")
 
-        if isinstance(item, Consumable):
+    def _consume(self, item):
+        print(f"{self.name} использует {item}")
+        if item.effect_type == "heal":
+            self.health += item.effect_value
+            self.health = min(self.max_health, self.health)
+            print(f"текущее хп {self.name} = {self.health}")
+        elif item.effect_type == "buff_defense":
+            self.defense += item.effect_value
+            print(f"текущая защита {self.name} = {self.defense}")
+        elif item.effect_type == "buff_attack":
+            self.attack += item.effect_value
+            print(f"текущая атака {self.name} = {self.attack}")
+        elif item.effect_type == "gold":
+            max_gold_bonus = int(item.effect_value * 0.2)
+            random_bonus = random.randint(-max_gold_bonus, max_gold_bonus)
+            self.gold += item.effect_value + random_bonus
+            print(f"вы получили {item.effect_value + random_bonus} золота с мешка")
+        elif item.effect_type == "regeneration":
+            self.add_effect("continuous_heal", item.duration, item.effect_value)
+        elif item.effect_type == "poison":
+            self.add_effect("poison", item.duration, item.effect_value)
 
-            if item in self.inventory:
-                print(f"{self.name} использует {item}")
-                if item.effect_type == "heal":
-                    self.health += item.effect_value
-                    self.health = min(self.max_health, self.health)
-                    print(f"текущее хп {self.name} = {self.health}")
-                elif item.effect_type == "buff_defense":
-                    self.defense += item.effect_value
-                    print(f"текущая защита {self.name} = {self.defense}")
-                elif item.effect_type == "buff_attack":
-                    self.attack += item.effect_value
-                    print(f"текущая атака {self.name} = {self.attack}")
-                    # добавить новые эффекты
-                elif item.effect_type == "gold":
-                    max_gold_bonus = int(
-                        item.effect_value * 0.2
-                    )  # случайный бонус к золоту: отнимает или прибавляет монеты в пределах 20%
-                    random_bonus = random.randint(
-                        -max_gold_bonus, max_gold_bonus
-                    )  # золото либо отнимается, либо прибавляется в диапазоне max_gold_bonus
-                    self.gold += (
-                        item.effect_value + random_bonus
-                    )  # золото прибавляется к базовому значению
-                    print(
-                        f"вы получили {item.effect_value + random_bonus} золота с мешка"
-                    )
-                elif item.effect_type == "regeneration":
-                    self.add_effect("continuous_heal", item.duration, item.effect_value)
-                elif item.effect_type == "poison":
-                    self.add_effect("poison", item.duration, item.effect_value)
-
-                self.inventory.remove(item)
-            else:
-                raise ItemNotFoundError(f"предмета {item.name} нет в инвентаре")
-
+        self.inventory.remove(item)
 
     def add_item(self, *items):
         """добавление предмета в инвентарь игроку
